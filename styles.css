@@ -1,0 +1,19 @@
+body
+{
+    font-family: "Consolas", sans-serif;
+}
+
+.title h1
+{
+    font-size: 5em;
+}
+
+section h1
+{
+    font-size: 3em;
+}
+
+section h2
+{
+    font-size: 2em;
+}

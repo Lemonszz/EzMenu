@@ -1,0 +1,338 @@
+<head>
+	<link rel="stylesheet" type="text/css" href="gmvisualizer.css" />
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+	<div class="title">
+		<h1>EzMenu Documentation</h1>
+	</div>
+	<div class="links">
+		<ul>
+			<li>GameMaker Marketplace</li>
+			<li>Itch.io</li>
+		</ul>
+	</div>
+
+	<div class="contents">
+		<ul>
+			<li>
+				<a href="#settingup">Setting Up</a>
+				<ul>
+					<li><a href="#importing">Importing EzMenu into your project</a></li>
+					<li><a href="#basicusage">Basic Usage</a></li>
+					<li><a href="#addingstuff">Adding Items to your Menu</a></li>
+					<li><a href="#config">Configuring EzMenu</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#components">Custom Components</a>
+				<ul>
+					<li><a href="#makeyourown">Creating a Custom Component</a></li>
+					<li><a href="#drawscripts">Component Draw Scripts</a></li>
+					<li><a href="#activatescripts">Component Activate Scripts</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#transitions">Transition Animations</a>
+			</li>
+			<li>
+				<a href="#data">Component Data Storage</a>
+			</li>
+			<li>
+				<a href="#input">Input Management</a>
+			</li>
+		</ul>
+	</div>
+
+	<section>
+		<h1><a id="settingup"></a>Setting Up</h1>
+
+		<div>
+			<h2><a id="importing"></a>Importing EzMenu into your project</h2>
+			<p>
+				<b>Via Marketplace</b>:
+				<br>
+					Import the project from the library screen, items in the demo folders are optional
+				<br>
+				<br>
+				<b>Other</b>:
+				<br>
+					Drag the .YYMP file onto the workspace area of your project.
+					Items in the demo folders are optional
+			</p>
+		
+		</div>
+
+		<div>
+			<h2><a id="basicusage"></a>Basic Usage</h2>
+			<p>
+				At the beginning of you game, run this code
+			</p>
+
+			<div class="gminfo">
+				<li class="text">menu_create("main_menu");</li>
+				<li class="text">menu_add_label("Hello EzMenu", -1);	//-1 uses the gamemaker default font!</li>
+				<li class="text">open_menu("main_menu");</li>
+			</div>
+
+			<p>Now run your game, you should see a menu appear.</p>
+
+		</div>
+		
+		<div>
+			<h2><a id="addingstuff"></a>Adding Items to your Menu</h2>
+			<p>
+				EzMenu comes with many scripts to easily add stuff to your menu.
+				<br>
+				See the scripts under Scripts->EzMenu->Menu
+				<br>
+				Simply call these menu_add_* scripts to add elements to your menu.
+			</p>
+			<div class="gminfo">
+				<li class="text">menu_create("main_menu");</li>
+				<br>
+				<li class="text">menu_add_image(sDemoGameTitle, 1);</li>
+				<li class="text">menu_add_gap(15);</li>
+				<li class="text">menu_add_button_text_script(0, "Start Game", fnUiLarge, start_game, []);</li>
+			</div>
+
+		</div>
+		<div>
+			<h2><a id="config"></a>Configuring EzMenu</h2>
+			<p>EzMenu offers a decent amount of customization right out of the box, the configuration script is located at Scripts->EzMenu->EzMenuConfig</p>
+			<p>You may also wish to create your own component draw scripts or modify the existing ones located at Scripts->EzMenu->Component->draw This will help EzMenu fit your game's aesthetic.</p>
+		</div>
+	</section>
+
+	<section>
+		<h1><a id="components"></a>Custom Components</h1>
+
+		<div>
+			<h2><a id="makeyourown"></a>Creating a Custom Component</h2>
+			<p>You can add your own components. See the menu_add_* scripts under Scripts->EzMenu->Menu to see some examples.</p>
+			<p>Let’s create an image button that will link to another menu. Let’s create an empty script called <i>"menu_add_button_image_link"</i></p>
+			<p>Since EzMenu already contains a text button (Scripts->EzMenu->menu->menu_add_button_text_link) have a look at the code for that to get an idea of what we’ll be creating.</p>
+			<p>
+				We need 3 things for our image button.
+
+				<ul>
+					<li>An index</li>
+					<li>Component Info</li>
+					<li>A height/size</li>
+				</ul>
+			</p>
+
+			<p>The index is used for gamepads to know which element to go to next as well as some internal logic for selecting menu elements. </p>
+			<p>If a component has an index of -1, it can not be selected. Since out image button will need to be clicked, we need to give each one a unique index. Like the text button, we will make this the first parameter for our script</p>
+		
+			<div class="gminfo">
+				<li class="text">var index = argument0;</li>
+			</div>
+
+			<p>Our image button will need a sprite, let’s make that the second parameter and then the scale as the third</p>
+
+			<div class="gminfo">
+				<li class="text">var index = argument0;</li>
+				<li class="text">var sprite = argument1;</li>
+				<li class="text">var scale = argument2;</li>
+			</div>
+
+			<p>With this info, we can work out the size for the component on the menu</p>
+
+			<div class="gminfo">
+				<li class="text">var index = argument0;</li>
+				<li class="text">var sprite = argument1;</li>
+				<li class="text">var scale = argument2;</li>
+				<li class="text">var size = sprite_height(sprite) * scale;</li>
+			</div>
+
+			<p>The next thing we’ll need is the menu to link to. This will be our next parameter.</p>
+		
+			<div class="gminfo">
+				<li class="text">var index = argument0;</li>
+				<li class="text">var sprite = argument1;</li>
+				<li class="text">var scale = argument2;</li>
+				<li class="text">var menu = argument3;</li>
+				<li class="text">var size = sprite_get_height(sprite) * scale;</li>
+			</div>
+
+			<p>Now onto the most important part, creating our component.</p>
+			<p>A component is made up of an array with specific information
+				<ul>
+					<li>Draw Script</li>
+					<li>Activate Script</li>
+					<li>Draw Script parameters array</li>
+					<li>Activate Script parameters array</li>
+				</ul>
+			</p>
+
+			<p>EzMenu comes with a script to draw a sprite as a menu element, it’s under Scripts->EzMenu->component->draw and it’s called <i>"draw_component_sprite"</i></p>
+		
+			<p>We can simply use that in our component array.</p>
+			
+			<div class="gminfo">
+				<li class="text">var comp = [draw_component_sprite];</li>
+			</div>
+
+			<p>Next we need our activate script, once again, EzMenu comes with one of these that will open another menu. Scripts->EzMenu-component->activate. It’s called <i>"activate_component_link"</i></p>
+		
+			<div class="gminfo">
+				<li class="text">var comp = [draw_component_sprite, activate_component_link];</li>
+			</div>
+
+			<p>Now we’re just missing one thing, our script inputs. Opening up draw_component_sprite, we see that it needs two inputs, the sprite & scale. We’ll add theseas an array to our component array like so:</p>
+		
+			<div class="gminfo">
+				<li class="text">var comp = [draw_component_sprite, activate_component_link, [sprite, scale]];</li>
+			</div>
+
+			<p>Next, the inputs for activate_component_link, opening that script shows it simple needs a menu name to open. Let’s add it</p>
+		
+			<div class="gminfo">
+				<li class="text">var comp = [draw_component_sprite, activate_component_link, [sprite, scale], [menu]];</li>
+			</div>
+			
+			<p>Now we have our component completed, we can add it to our menu.</p>
+
+			<div class="gminfo">
+				<li class="text">menu_add(index, comp, size);</li>
+			</div>
+
+			<p>All together, it should look something like this:</p>
+
+			<div class="gminfo">
+				<li class="text">var index = argument0;</li>
+				<li class="text">var sprite = argument1;</li>
+				<li class="text">var scale = argument2;</li>
+				<li class="text">var menu = argument3;</li>
+				<br>
+				<li class="text">var size = sprite_get_height(sprite) * scale;</li>
+				<br>
+				<li class="text">var comp = [draw_component_sprite, activate_component_link, [sprite, scale], [menu]];</li>
+				<br>
+				<li class="text">menu_add(index, comp, size);</li>
+			</div>
+
+			<p>
+				Now to test our component.
+				<br>
+				Go to your menu initialization point and test it out! Here’s an example:
+			</p>
+			<div class="gminfo">
+				<li class="text">menu_create("menu_main");</li>
+				<br>
+				<li class="text">menu_add_button_image_link(0, sMyCoolButton, 2, "test_menu");</li>
+				<br>
+				<li class="text">menu_create("test_menu");</li>
+				<br>
+				<li class="text">menu_add_button_image_link(0, sMyCoolButton, 3, "menu_main");</li>
+				<br>
+				<li class="text">open_menu("menu_main");</li>
+			</div>
+
+			<p>
+				If all is well, you should have two different menus with image buttons on them!
+				<br>
+				You can create your own draw_ or activate_ scripts as well, look at the default EzMenu scripts for inspiration and explanation.
+			</p>
+		</div>
+
+		<div>
+			<h2><a id="drawscripts"></a>Component Draw Scripts</h2>
+			<p>
+				Components ALL have a draw script attached to them, this is what draws them onto the menu. You can use the built-in scripts or create you own. 
+				<br>
+				The built-in draw scripts are located at EzMenu->Component->Draw, look at or modify these to learn more about how they work.
+				<br>				
+				Every component is passed the following parameters at draw time:
+				<br>
+				<ul>
+					<li>X Position - The X draw position of the component</li>
+					<li>Y Position - The Y draw position of the component</li>
+					<li>Size - The height of the component</li>
+					<li>Selected - Whether or not the component is selected</li>
+					<li>Inputs - Generally an array of inputs specific to this draw script</li>
+				</ul>	
+			</p>
+		</div>
+
+		<div>
+			<h2><a id="activatescripts"></a>Component Activate Scripts</h2>
+
+			<p>
+				Every component has an "activate" script that is fired when an input is pressed while a component is selected.
+				<br>
+				There are 5 types of input, defined via the eInputType enum.
+				<br>
+				<ul>
+					<li>Press - When the input activate key/button is first pressed</li>
+					<li>Hold - While the input activate key/button is held</li>
+					<li>Left - GAMEPAD ONLY, when the left input is held</li>
+					<li>Right - GAMEPAD ONLY, when the right input is held</li>
+				</ul>
+				Components are passed the following parameters when one of these inputs is pressed
+				<ul>
+				<li>Input Type - eInputType enum, which type of input is pressed. Make sure to check this.</li>
+				<li>X Position - The X position of the component</li>
+				<li>Y Position - The Y position of the component</li>
+				<li>Mouse X - The X position of the mouse</li>
+				<li>Mouse Y - The Y position of the mouse</li>
+				<li>Input - An array of inputs specific to this activate script</li>
+				</ul>
+				See the scripts contained at Scripts->EzMenu->Component->activate for examples
+			</p>
+		</div>
+	</section>
+
+	<section>
+		<h1><a id="transitions"></a>Transition Animations</h1>
+		<p>
+			EzMenu comes equipped with a basic menu animation system. By default,  a slide animation is applied when you change menus.
+			<br>
+			<br>
+			To create your own menu animation, create a child of parMenuAnimator and mark it persistent.
+			<br>
+			<br>
+			To set your animator object as the animation used, open up the EzMenuConfiguration script and change the value of MENU_ANIMATOR to your animator object.
+			<br>
+			<br>
+			See the oMenuAnimatorSlide to see how it works.
+		</p>
+	</section>
+	<section>
+		<h1><a id="data"></a>Component Data Storage</h1>
+		<p>
+			EzMenu contains some scripts that allow you to store the state of components, this is used in Sliders, checkboxes, selectors, etc.
+			<br>
+			This data is not saved between sessions. If you wish to serialize the data, it is stored in a globalds_map called global.component_values .
+			<br>
+			To save data to the storage system:				
+		</p>
+		<div class="gminfo">
+			<li class="text">component_data_set(component_id, value);</li>
+		</div>
+
+		<p>To retrieve it:</p>
+		<div class="gminfo">
+			<li class="text">var value = component_data_get(component_id);</li>
+		</div>
+
+		<p>
+			There are some helper methods located at Scripts->EzMeniu->Component->data to make handling of more complex components easier. 
+			<br>
+			This system is not intended to be a perfect solution, you may wish to engineer your own.
+		</p>
+	</section>	
+	<section>
+		<h1><a id="input"></a>Input Management</h1>
+		<p>
+				EzMenu has an easy to change input system that you can change or modify to fit into your game.
+				<br><br>
+				Open up the oMenus object located at Objects->EzMenu and open the "Begin Step" method.
+				<br>
+				In here you will see the checks for user input, simply change these to suit your needs.
+				<br><br>
+				EzMenu also offers a simple solution to switch between Keyboard/Mouse input to controller input, this is located in the same place. Modify this to your needs.
+				
+		</p>
+	</section>
